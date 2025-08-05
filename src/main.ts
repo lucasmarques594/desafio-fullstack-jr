@@ -1,13 +1,13 @@
 // src/main.ts
-import Fastify from 'fastify';
-import { BillRepository } from './infra/database/repositories/BillRepository';
-import { GeminiService } from './infra/ia/GeminiService';
-import { BillController } from './infra/http/controllers/BillController';
-import { billRoutes } from './infra/http/routes/BillRoutes';
-import { CreateBillUseCase } from './application/usecases/CreateBill';
-import { GetAllBillsUseCase } from './application/usecases/GetAllBills';
-import { GetBillByIdUseCase } from './application/usecases/GetBillById';
-import { DeleteBillUseCase } from './application/usecases/DeleteBill';
+import Fastify from "fastify";
+import { GeminiService } from "./infra/ia/GeminiService";
+import { BillController } from "./infra/http/controllers/BillController";
+import { billRoutes } from "./infra/http/routes/BillRoutes";
+import { CreateBillUseCase } from "./application/usecases/CreateBill";
+import { GetAllBillsUseCase } from "./application/usecases/GetAllBills";
+import { GetBillByIdUseCase } from "./application/usecases/GetBillById";
+import { DeleteBillUseCase } from "./application/usecases/DeleteBill";
+import { BillRepository } from "./infra/repositories/BillRepository";
 
 // --- Criação da App em uma função separada ---
 export async function buildServer() {
@@ -17,14 +17,17 @@ export async function buildServer() {
   });
 
   // --- Configuração de CORS ---
-  server.addHook('preHandler', (req, reply, done) => {
-    reply.header('Access-Control-Allow-Origin', '*');
+  server.addHook("preHandler", (req, reply, done) => {
+    reply.header("Access-Control-Allow-Origin", "*");
     done();
   });
 
-  server.options('*', (req, reply) => {
-    reply.header('Access-Control-Allow-Methods', 'GET, POST, DELETE, PUT, PATCH, OPTIONS');
-    reply.header('Access-Control-Allow-Headers', 'Content-Type, Authorization');
+  server.options("*", (req, reply) => {
+    reply.header(
+      "Access-Control-Allow-Methods",
+      "GET, POST, DELETE, PUT, PATCH, OPTIONS"
+    );
+    reply.header("Access-Control-Allow-Headers", "Content-Type, Authorization");
     return reply.code(204).send();
   });
 
@@ -35,7 +38,10 @@ export async function buildServer() {
 
     const geminiService = new GeminiService();
 
-    const createBillUseCase = new CreateBillUseCase(billRepository, geminiService);
+    const createBillUseCase = new CreateBillUseCase(
+      billRepository,
+      geminiService
+    );
     const getAllBillsUseCase = new GetAllBillsUseCase(billRepository);
     const getBillByIdUseCase = new GetBillByIdUseCase(billRepository);
     const deleteBillUseCase = new DeleteBillUseCase(billRepository);
@@ -48,7 +54,6 @@ export async function buildServer() {
     );
 
     server.register(billRoutes, { controller: billController });
-
   } catch (error) {
     server.log.error(error, "Erro durante a configuração dos plugins e rotas.");
     process.exit(1);
@@ -62,7 +67,7 @@ async function start() {
   const server = await buildServer();
 
   try {
-    await server.listen({ port: 3000, host: '0.0.0.0' });
+    await server.listen({ port: 3000, host: "0.0.0.0" });
     console.log(`🚀 Servidor HTTP rodando em http://localhost:3000`);
   } catch (err) {
     server.log.error(err);
