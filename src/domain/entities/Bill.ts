@@ -1,6 +1,11 @@
 import { randomUUID } from "crypto";
 
-export type BillType = "AGUA" | "ENERGIA" | "INTERNET" | "OUTRO";
+export enum BillType {
+  AGUA = "AGUA",
+  ENERGIA = "ENERGIA",
+  INTERNET = "INTERNET",
+  OUTRO = "OUTRO",
+}
 
 interface BillProps {
   id?: string;
