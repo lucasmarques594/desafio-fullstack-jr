@@ -8,6 +8,7 @@ import { GetAllBillsUseCase } from "./application/usecases/GetAllBills";
 import { GetBillByIdUseCase } from "./application/usecases/GetBillById";
 import { DeleteBillUseCase } from "./application/usecases/DeleteBill";
 import { BillRepository } from "./infra/repositories/BillRepository";
+import { pool } from "./infra/database/postgres";
 
 // --- Criação da App em uma função separada ---
 export async function buildServer() {
@@ -33,8 +34,7 @@ export async function buildServer() {
 
   // --- Injeção de Dependências e Registro de Rotas ---
   try {
-    const billRepository = new BillRepository();
-    await billRepository.setup();
+    const billRepository = new BillRepository(pool);
 
     const geminiService = new GeminiService();
 
