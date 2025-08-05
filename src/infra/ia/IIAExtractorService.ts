@@ -1,4 +1,4 @@
-import { Bill, BillType } from "../../domain/entities/Bill";
+import { BillType } from "../../domain/entities/Bill";
 
 export interface ExtractedData {
   nome_cliente: string;

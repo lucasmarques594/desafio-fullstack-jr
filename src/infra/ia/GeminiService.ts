@@ -6,6 +6,7 @@ export class GeminiService implements IIAExtractorService {
 
   constructor() {
     const apiKey = process.env.GEMINI_API_KEY;
+
     if (!apiKey) {
       throw new Error(
         "GEMINI_API_KEY não está definida nas variáveis de ambiente."
@@ -60,8 +61,6 @@ export class GeminiService implements IIAExtractorService {
       const result = await model.generateContent([prompt, filePart]);
       const response = result.response;
       const text = response.text();
-
-      console.log("Resposta da IA (JSON):", text);
 
       const data = JSON.parse(text) as ExtractedData;
 
