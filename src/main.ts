@@ -9,8 +9,6 @@ import { BillRepository } from "./infra/repositories/BillRepository";
 import { pool } from "./infra/database/postgres";
 import { app } from "./app";
 
-const PORT = Number(process.env.PORT) || 3333;
-
 const billRepository = new BillRepository(pool);
 const geminiService = new GeminiService();
 
@@ -27,6 +25,8 @@ const billController = new BillController(
 );
 
 app.register(billRoutes, { prefix: "/bills", controller: billController });
+
+const PORT = Number(process.env.PORT) || 3000;
 
 app
   .listen({
