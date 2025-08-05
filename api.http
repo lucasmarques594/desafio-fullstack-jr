@@ -1,0 +1,21 @@
+@base_url = http://localhost:8080
+
+### create a new bill
+POST {{base_url}}/bills
+content-type: application/json
+
+{
+  "file": "data:[mime/type];base64,[string_base64_do_arquivo]"
+}
+
+### List all bills
+GET {{base_url}}/bills
+content-type: application/json
+
+### Get by bill id
+GET {{base_url}}/bills/bc6b84af-d77e-4d9e-87a2-ae06ee075ff5
+content-type: application/json
+
+### Delete a bill
+DELETE {{base_url}}/bills/bc6b84af-d77e-4d9e-87a2-ae06ee075ff5
+content-type: application/json

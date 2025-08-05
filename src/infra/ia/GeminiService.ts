@@ -3,11 +3,14 @@ import { IIAExtractorService, ExtractedData } from "./IIAExtractorService";
 
 export class GeminiService implements IIAExtractorService {
   private genAI: GoogleGenerativeAI;
-  
+
   constructor() {
     const apiKey = process.env.GEMINI_API_KEY;
+
     if (!apiKey) {
-      throw new Error("GEMINI_API_KEY não está definida nas variáveis de ambiente.");
+      throw new Error(
+        "GEMINI_API_KEY não está definida nas variáveis de ambiente."
+      );
     }
     this.genAI = new GoogleGenerativeAI(apiKey);
   }
@@ -15,23 +18,25 @@ export class GeminiService implements IIAExtractorService {
   private getMimeType(base64: string): string {
     const mime = base64.match(/data:([a-zA-Z0-9]+\/[a-zA-Z0-9-.+]+).*,.*/);
     if (mime && mime.length > 1) {
-      if (['image/jpeg', 'image/png', 'application/pdf'].includes(mime[1])) {
+      if (["image/jpeg", "image/png", "application/pdf"].includes(mime[1])) {
         return mime[1];
       }
     }
-    throw new Error("Formato de arquivo inválido ou não suportado. Use JPEG, PNG ou PDF em base64.");
+    throw new Error(
+      "Formato de arquivo inválido ou não suportado. Use JPEG, PNG ou PDF em base64."
+    );
   }
 
   async extractDataFromFile(base64File: string): Promise<ExtractedData> {
     const model = this.genAI.getGenerativeModel({
       model: "gemini-1.5-flash",
       generationConfig: {
-        responseMimeType: "application/json", 
+        responseMimeType: "application/json",
       },
     });
-    
+
     const mimeType = this.getMimeType(base64File);
-    const fileData = base64File.split('base64,')[1];
+    const fileData = base64File.split("base64,")[1];
 
     const prompt = `
       Analise a imagem ou PDF deste boleto/fatura e extraia as seguintes informações:
@@ -57,15 +62,12 @@ export class GeminiService implements IIAExtractorService {
       const response = result.response;
       const text = response.text();
 
-      console.log("Resposta da IA (JSON):", text);
-
       const data = JSON.parse(text) as ExtractedData;
 
       if (!data.nome_cliente || !data.vencimento || !data.valor === null) {
         throw new Error("IA não conseguiu extrair os campos obrigatórios.");
       }
       return data;
-
     } catch (error) {
       console.error("Erro ao processar com a API do Gemini:", error);
       throw new Error("Falha ao extrair dados do arquivo com a IA.");
